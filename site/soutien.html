@@ -3,19 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soutenir le Cahier — sur-le-phil.fr</title>
-<meta name="description" content="Trois manières de soutenir le Cahier de Philo : l'Obole (un café à 1 €), les Drachmes (1,99 € de crédits en puissance) et le Banquet (4,99 € — soutien + accès illimité).">
+<title>Accès illimité au Cahier de Philo — 4,99 € · sur-le-phil.fr</title>
+<meta name="description" content="Soutenir le Cahier de Philo : le Banquet, 4,99 € une fois pour toutes — accès illimité à toutes les révisions de philo du bac.">
 <!-- ============================================================
-  PAGE DE SOUTIEN / PRÉ-PAIEMENT
-  Trois offres (boutons → api/checkout.php) :
-    · ?offre=cafe      → 1,00 €  (paiement unique, don « café »)
-    · ?offre=credits   → 1,99 €  (crédits/drachmes, à utiliser plus tard)
-    · ?offre=illimite  → 4,99 €  (soutien + accès illimité au site)
-  ⚠ Côté backend (api/checkout.php), faire correspondre ces trois
-    valeurs d'« offre » aux montants 100 / 199 / 499 centimes.
-    L'ancienne offre « 5 € illimité » passe à 4,99 €.
-  Tant que STRIPE_SECRET_KEY est un placeholder, les boutons
-  renvoient l'erreur propre habituelle — comportement inchangé.
+  PAGE DE SOUTIEN / ACHAT — offre unique : le Banquet, 4,99 €
+  (accès illimité). Le bouton pointe vers le Payment Link Stripe
+  (aucune clé secrète requise) ; après paiement, le propriétaire
+  active le compte depuis l'onglet Admin du site (voir README).
+  Les anciennes offres Obole (1 €) et Drachmes (1,99 €) sont
+  masquées — l'historique git permet de les restaurer.
  ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,800;1,400;1,600&family=Caveat:wght@500;700&family=Archivo:wght@500;600;700&display=swap" rel="stylesheet">
@@ -132,41 +128,11 @@ footer .craie{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--craie-ja
     Votre soutien est bien arrivé. Le Cahier — et son auteur — vous en sont reconnaissants. Bonnes révisions&nbsp;!
   </div>
 
-  <p class="chapeau">Derrière l'agora&nbsp;: un serveur, un nom de domaine et pas mal de cafés. Chaque geste compte — du plus petit au plus illimité. Paiement sécurisé par Stripe, sans création de compte&nbsp;; aucune donnée bancaire ne transite par le site.</p>
+  <p class="chapeau">Derrière l'agora&nbsp;: un serveur, un nom de domaine et pas mal de cafés. Le Cahier offre 15 minutes de découverte — au-delà, une seule formule, simple et définitive. Paiement sécurisé par Stripe&nbsp;; aucune donnée bancaire ne transite par le site.</p>
 
-  <div class="formules">
-
-    <!-- ===== 1 € — L'Obole ===== -->
-    <section class="formule">
-      <span class="tampon">Petit geste, grande aide</span>
-      <span class="pictogramme">☕</span>
-      <h2>L'Obole</h2>
-      <p class="grec">un café pour l'auteur</p>
-      <p class="prix">1&nbsp;€ <small>· une fois</small></p>
-      <p class="texte">Épicure classait les désirs&nbsp;: <em>naturels et nécessaires</em>, naturels non nécessaires, vains. Ce café appartient à la deuxième famille — on peut s'en passer, mais quel surcroît de joie. Une obole, et le Cahier carbure un jour de plus.</p>
-      <ul class="apporte">
-        <li>Un vrai café (probablement transformé en fiches)</li>
-        <li>La satisfaction du bienfait selon Sénèque</li>
-      </ul>
-      <a class="btn" href="api/checkout.php?offre=cafe">☕ Offrir un café — 1&nbsp;€</a>
-      <p class="annotation">«&nbsp;Carpe diem… et un expresso.&nbsp;»</p>
-    </section>
-
-    <!-- ===== 1,99 € — Les Drachmes ===== -->
-    <section class="formule">
-      <span class="tampon">À utiliser plus tard</span>
-      <span class="pictogramme">🪙</span>
-      <h2>Les Drachmes</h2>
-      <p class="grec">des crédits en puissance</p>
-      <p class="prix">1,99&nbsp;€ <small>· crédits</small></p>
-      <p class="texte">Aristote distingue l'<em>en puissance</em> et l'<em>en acte</em>&nbsp;: le gland est chêne en puissance. Ces drachmes dorment dans votre besace — elles passeront <em>à l'acte</em> sur les futures options du Cahier (contenus et bonus à venir). Un soutien aujourd'hui, un avantage demain.</p>
-      <ul class="apporte">
-        <li>1,99&nbsp;€ de crédits conservés pour les nouveautés</li>
-        <li>Le plaisir d'avoir investi comme Thalès<br><span style="font-size:.78rem;color:var(--encre-claire)">(qui fit fortune en louant des pressoirs — vraie histoire, Aristote la raconte)</span></li>
-      </ul>
-      <a class="btn" href="api/checkout.php?offre=credits">🪙 Acheter des drachmes — 1,99&nbsp;€</a>
-      <p class="annotation">«&nbsp;En puissance aujourd'hui, en acte demain.&nbsp;»</p>
-    </section>
+  <!-- Les offres Obole (1 €) et Drachmes (1,99 €) sont masquées : offre
+       unique à 4,99 €. Pour les restaurer, voir l'historique git. -->
+  <div class="formules" style="max-width:460px;margin:0 auto">
 
     <!-- ===== 4,99 € — Le Banquet ===== -->
     <section class="formule royale">
@@ -181,11 +147,13 @@ footer .craie{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--craie-ja
         <li>Toutes les futures nouveautés incluses</li>
         <li>La gratitude éternelle d'un prof de philo en herbe</li>
       </ul>
-      <a class="btn jaune" href="api/checkout.php?offre=illimite">🏛️ Rejoindre le Banquet — 4,99&nbsp;€</a>
+      <a class="btn jaune" id="btn-banquet" href="https://buy.stripe.com/3cI8wQ0h34hd09K8Yjcwg02">🏛️ Rejoindre le Banquet — 4,99&nbsp;€</a>
       <p class="annotation">«&nbsp;Mention très bien&nbsp;!&nbsp;»</p>
     </section>
 
   </div>
+
+  <p class="chapeau" style="margin-top:1.6rem;font-size:.9rem">💡 L'accès illimité est rattaché à ton <strong>compte</strong> (bouton «&nbsp;👤 Compte&nbsp;» sur la page d'accueil)&nbsp;: crée-le avant de payer, avec le même email, et ton accès sera activé dessus sous 24&nbsp;h maximum — en général bien plus vite.</p>
 
   <!-- ===== Parrêsia : franc-parler ===== -->
   <div class="note">
@@ -196,7 +164,9 @@ footer .craie{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--craie-ja
       <dt>Pourquoi donner pour un site en accès libre&nbsp;?</dt>
       <dd>Kant distingue l'obligation de la contrainte&nbsp;: rien ne vous y contraint — c'est exactement ce qui donne sa valeur au geste. L'obligation librement reconnue, en somme&nbsp;: du Kant appliqué.</dd>
       <dt>Le paiement est-il sûr&nbsp;?</dt>
-      <dd>Oui&nbsp;: tout passe par Stripe, leader du paiement en ligne. Le site ne voit ni ne stocke jamais votre carte. Pas de compte à créer, pas d'abonnement caché — un paiement unique, et c'est tout.</dd>
+      <dd>Oui&nbsp;: tout passe par Stripe, leader du paiement en ligne. Le site ne voit ni ne stocke jamais votre carte. Pas d'abonnement caché — un paiement unique, et c'est tout. Seul un compte gratuit sur le site est nécessaire pour recevoir l'accès illimité.</dd>
+      <dt>Quand mon accès est-il activé&nbsp;?</dt>
+      <dd>Sous 24&nbsp;heures maximum après le paiement (souvent en quelques minutes), sur le compte portant le même email. Le déblocage apparaît tout seul, même page ouverte.</dd>
       <dt>Et si je change d'avis&nbsp;?</dt>
       <dd>Écrivez via la page <a href="mentions-legales.html">mentions légales</a>&nbsp;: on trouvera une solution. La justice corrective d'Aristote s'applique aussi aux petites sommes.</dd>
     </dl>
@@ -215,7 +185,6 @@ if (/[?&](merci|success)=1/.test(location.search)) {
   document.getElementById('merci').style.display = 'block';
 }
 </script>
-<script src="paywall.js" defer></script>
 <script src="custom.js" defer></script>
 </body>
 </html>
