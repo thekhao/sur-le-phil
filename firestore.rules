@@ -1,0 +1,53 @@
+rules_version = '2';
+// ============================================================================
+// Règles de sécurité Firestore — à publier dans la console Firebase :
+// console.firebase.google.com → projet « sur-le-phil » → Firestore Database
+// → Règles → coller ce fichier → Publier.
+//
+// ⚠ AVANT de publier : remplacer ADMIN_EMAIL_A_REMPLACER ci-dessous par
+// l'email du propriétaire (le même que ADMIN_EMAIL dans site/js/firebase-init.js).
+//
+// Modèle de données : une collection « users », un document par compte (id = uid) :
+//   { email, nom, usedMs, premium, creeLe, majLe }
+//
+// Garanties :
+//   · chacun ne lit/écrit que sa propre fiche ;
+//   · personne ne peut s'octroyer « premium » (seul l'admin le modifie) ;
+//   · le temps consommé « usedMs » ne peut jamais diminuer (anti-triche) ;
+//   · l'admin (email vérifié uniquement) peut chercher et modifier toute fiche.
+// ============================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function connecte() {
+      return request.auth != null;
+    }
+    function estAdmin() {
+      return connecte()
+        && request.auth.token.email == 'ADMIN_EMAIL_A_REMPLACER'
+        && request.auth.token.email_verified == true;
+    }
+
+    match /users/{uid} {
+      allow get: if connecte() && (request.auth.uid == uid || estAdmin());
+      allow list: if estAdmin();
+
+      allow create: if connecte() && request.auth.uid == uid
+        && request.resource.data.get('premium', false) == false
+        && request.resource.data.get('usedMs', 0) >= 0;
+
+      allow update: if estAdmin() || (
+        connecte() && request.auth.uid == uid
+        && request.resource.data.get('premium', false) == resource.data.get('premium', false)
+        && request.resource.data.get('usedMs', 0) >= resource.data.get('usedMs', 0)
+      );
+
+      allow delete: if estAdmin() || (connecte() && request.auth.uid == uid);
+    }
+
+    // Tout le reste : interdit.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
