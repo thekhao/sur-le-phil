@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offre-moi un café ☕ — Le Cahier de Philo</title>
+<meta name="description" content="Le Cahier de Philo est gratuit. Si les fiches t'aident à réviser le bac, tu peux soutenir le site en offrant un café.">
+<link rel="canonical" href="https://sur-le-phil.fr/soutien.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,800;1,400;1,600&family=Caveat:wght@500;700&family=Archivo:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ardoise:#243832;--ardoise-fonce:#1A2A25;--craie:#F7F4EA;--craie-jaune:#E5B43C;
+  --papier:#FDFCF7;--papier-ombre:#EFEAD9;--encre:#1F2D3D;--encre-claire:#5A6B7E;
+  --rouge:#B33A3A;--vert-ok:#3E7A5E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Spectral',Georgia,serif;background:var(--papier-ombre);color:var(--encre);line-height:1.6}
+.tableau{
+  background:radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.05), transparent 50%),var(--ardoise);
+  border-bottom:10px solid #8A6240;box-shadow:inset 0 0 80px rgba(0,0,0,.35);
+  color:var(--craie);padding:3rem 1.5rem 3.4rem;text-align:center;
+}
+.tableau h1{font-family:'Caveat',cursive;font-weight:700;font-size:clamp(2.6rem,6vw,4rem);line-height:1.05;
+  text-shadow:0 0 6px rgba(247,244,234,.25)}
+.tableau h1 .souligne{background-image:linear-gradient(90deg,var(--craie-jaune),var(--craie-jaune));
+  background-repeat:no-repeat;background-size:100% 3px;background-position:0 96%}
+.tableau p{font-style:italic;font-weight:300;color:rgba(247,244,234,.85);max-width:52ch;margin:.8rem auto 0}
+main{max-width:720px;margin:0 auto;padding:2.4rem 1.5rem 4rem}
+.message{display:none;font-family:'Archivo',sans-serif;font-size:.9rem;font-weight:600;color:#fff;
+  background:var(--vert-ok);border-radius:8px;padding:.8rem 1.2rem;margin-bottom:1.6rem;text-align:center}
+.message.erreur{background:var(--rouge)}
+.copie{background:var(--papier);border-radius:10px;padding:1.8rem 1.6rem;
+  box-shadow:0 2px 4px rgba(31,45,61,.08),0 10px 24px rgba(31,45,61,.06);text-align:center}
+.copie .temps{font-family:'Caveat',cursive;font-size:1.5rem;color:var(--rouge)}
+.offres{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 1.2rem}
+.offre{flex:1;min-width:200px;max-width:280px;border:1.5px solid #CFC8B2;border-radius:10px;padding:1.2rem;background:#fff}
+.offre.star{border-color:var(--craie-jaune);background:#FFFBEF;position:relative}
+.offre .prix{font-family:'Caveat',cursive;font-size:2.6rem;color:var(--ardoise);display:block}
+.offre .det{font-family:'Archivo',sans-serif;font-size:.78rem;color:var(--encre-claire);display:block;margin:.2rem 0 1rem}
+.btn{display:inline-block;font-family:'Archivo',sans-serif;font-size:.88rem;font-weight:700;text-decoration:none;
+  background:var(--ardoise);color:var(--craie);border:none;border-radius:8px;padding:.65rem 1.2rem;cursor:pointer;width:100%}
+.btn:hover{background:var(--ardoise-fonce)}
+.btn.jaune{background:var(--craie-jaune);color:var(--encre)}
+.reco{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--craie-jaune);color:var(--encre);
+  font-family:'Archivo',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  border-radius:999px;padding:.18rem .6rem;white-space:nowrap}
+.note{font-family:'Archivo',sans-serif;font-size:.72rem;color:#8A92A0;margin-top:1rem}
+.note a{color:#8A92A0}
+.retour{display:inline-block;margin-top:2rem;font-family:'Archivo',sans-serif;font-size:.85rem;font-weight:600;color:var(--ardoise)}
+</style>
+</head>
+<body>
+<header class="tableau">
+  <h1>Offre-moi <span class="souligne">un café</span> ☕</h1>
+  <p>Le Cahier de Philo est gratuit et le restera pendant les révisions.
+  Si les fiches t'aident, un petit café fait toute la différence pour garder le site en ligne.</p>
+</header>
+<main>
+  <div class="message" id="msg"></div>
+  <div class="copie">
+    <p id="temps-revision" style="display:none">D'après ton cahier, tu as déjà révisé
+      <span class="temps" id="temps-valeur"></span> ici. Pas mal, non&nbsp;?</p>
+    <div class="offres">
+      <div class="offre">
+        <span class="prix">1&nbsp;€</span>
+        <span class="det">Un café serré.<br>Merci pour le coup de pouce&nbsp;!</span>
+        <a class="btn" href="/api/checkout.php?plan=hour">Offrir un café</a>
+      </div>
+      <div class="offre star">
+        <span class="reco">Grand merci</span>
+        <span class="prix">5&nbsp;€</span>
+        <span class="det">Un grand café + ma reconnaissance éternelle (et l'accès illimité si un jour le site devient payant).</span>
+        <a class="btn jaune" href="/api/checkout.php?plan=full">Offrir un grand café</a>
+      </div>
+    </div>
+    <p class="note">Paiement sécurisé par Stripe · aucune donnée bancaire ne passe par ce site ·
+      <a href="/mentions-legales.html">Mentions légales &amp; CGV</a></p>
+  </div>
+  <a class="retour" href="/">← Retour aux révisions</a>
+</main>
+<script>
+(function(){
+  // Affiche le temps total de révision (compté par paywall.js sur la page principale)
+  try{
+    var t = parseInt(localStorage.getItem('bp_temps_total')||'0',10)||0;
+    if(t >= 120){
+      var m = Math.floor(t/60), h = Math.floor(m/60);
+      document.getElementById('temps-valeur').textContent = h>0 ? h+' h '+String(m%60).padStart(2,'0') : m+' minutes';
+      document.getElementById('temps-revision').style.display = 'block';
+    }
+  }catch(e){}
+  // Messages après redirection de paiement
+  var p = new URLSearchParams(location.search);
+  var msg = document.getElementById('msg');
+  if(p.get('paiement')==='ok'){ msg.textContent = '✓ Merci infiniment pour le café ! ☕'; msg.style.display='block'; }
+  else if(p.get('paiement')==='annule'){ msg.textContent = 'Paiement annulé — pas de souci !'; msg.className='message erreur'; msg.style.display='block'; }
+  else if(p.get('erreur')){ msg.textContent = 'Le paiement n’est pas encore activé — merci quand même pour l’intention ! ☕'; msg.className='message erreur'; msg.style.display='block'; }
+  if(p.toString()) history.replaceState(null,'',location.pathname);
+})();
+</script>
+</body>
+</html>
