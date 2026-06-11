@@ -1,0 +1,32 @@
+name: Déploiement FTP Infomaniak
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Générer la configuration (config.php depuis les secrets)
+        run: |
+          cat > site/api/config.php <<PHP
+          <?php
+          const STRIPE_SECRET_KEY = '${{ secrets.STRIPE_SECRET_KEY }}';
+          const COOKIE_SECRET     = '${{ secrets.COOKIE_SECRET }}';
+          const SITE_URL          = 'https://sur-le-phil.fr';
+          PHP
+
+      - name: Envoyer sur Infomaniak (FTPS)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: lklh.ftp.infomaniak.com
+          username: lklh_surlephil
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./site/
+          server-dir: web/
