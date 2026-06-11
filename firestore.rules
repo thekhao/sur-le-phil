@@ -4,8 +4,8 @@ rules_version = '2';
 // console.firebase.google.com → projet « sur-le-phil » → Firestore Database
 // → Règles → coller ce fichier → Publier.
 //
-// ⚠ AVANT de publier : remplacer ADMIN_EMAIL_A_REMPLACER ci-dessous par
-// l'email du propriétaire (le même que ADMIN_EMAIL dans site/js/firebase-init.js).
+// L'email admin ci-dessous doit rester identique à ADMIN_EMAIL
+// dans site/js/firebase-init.js.
 //
 // Modèle de données : une collection « users », un document par compte (id = uid) :
 //   { email, nom, usedMs, premium, creeLe, majLe }
@@ -24,7 +24,7 @@ service cloud.firestore {
     }
     function estAdmin() {
       return connecte()
-        && request.auth.token.email == 'ADMIN_EMAIL_A_REMPLACER'
+        && request.auth.token.email == 'albin@rabourdin.com'
         && request.auth.token.email_verified == true;
     }
 

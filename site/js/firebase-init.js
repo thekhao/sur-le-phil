@@ -22,7 +22,7 @@ export const firebaseConfig = {
 // Email du propriétaire du site : donne accès à l'onglet « Admin » (activation
 // des accès illimités après paiement). DOIT être identique à l'email admin
 // déclaré dans firestore.rules. Vide = onglet Admin désactivé.
-export const ADMIN_EMAIL = '';
+export const ADMIN_EMAIL = 'albin@rabourdin.com';
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
