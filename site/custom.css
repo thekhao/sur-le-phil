@@ -1,1 +1,8 @@
-/* test d'écriture — sera remplacé */
+/* ============================================================
+   custom.css — point d'extension pour les retouches de style.
+   Ce fichier est chargé par index.html APRÈS les styles du site :
+   tout ce qui est écrit ici prend le dessus, sans toucher au
+   gros fichier index.html. (Pratique pour les agents IA.)
+   Palette : --ardoise #243832 · --craie #F7F4EA · --craie-jaune #E5B43C
+             --papier #FDFCF7 · --encre #1F2D3D · --rouge #B33A3A
+   ============================================================ */
