@@ -1,7 +1,5 @@
 <?php
 // ⚠️ Configuration secrète — à compléter. Ne jamais partager ce fichier.
-// En production, ce fichier est généré automatiquement par le workflow
-// GitHub Actions à partir des secrets du repo.
-const STRIPE_SECRET_KEY = 'sk_A_REMPLACER';        // clé du compte Stripe
-const COOKIE_SECRET     = 'A_REMPLACER_longue_phrase_aleatoire';
-const SITE_URL          = 'https://sur-le-phil.fr';
+// En production, ce fichier est généré au déploiement depuis les secrets GitHub.
+const COOKIE_SECRET = 'A_REMPLACER_longue_phrase_aleatoire';
+const SITE_URL      = 'https://sur-le-phil.fr';
