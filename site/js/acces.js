@@ -122,6 +122,7 @@ function suivreCompte(user) {
   // (bouton d'achat rattaché au compte, plus d'invite à créer un compte).
   if (verrou) { deverrouiller(); verifierVerrou(); }
   if (!user) { etat.premium = false; publier(); verifierVerrou(); return; }
+  verifierPaiement(); // un compte vient de se connecter : son paiement existe peut-être déjà
   const ref = doc(db, 'users', user.uid);
   stopSnapshot = onSnapshot(ref, (snap) => {
     if (!snap.exists()) {
@@ -156,6 +157,33 @@ function ecrireFirestore() {
   dernierFirestore = usedMs;
   updateDoc(doc(db, 'users', user.uid), { usedMs, majLe: serverTimestamp() })
     .catch((e) => console.warn('Firestore (temps) :', e && e.code));
+}
+
+// ---------- Vérification automatique du paiement (api/paiement.php) ----------
+// Interroge le serveur, qui vérifie auprès de Stripe (clé restreinte) si un
+// paiement correspond à l'appareil (cookie), au uid ou à l'email du compte.
+// Sans clé configurée, le serveur répond {configure:false} : on retombe sur
+// l'activation manuelle par l'admin (Firestore premium).
+function verifierPaiement() {
+  if (etat.premium) return;
+  const params = new URLSearchParams();
+  if (etat.user) {
+    params.set('uid', etat.user.uid);
+    if (etat.user.email) params.set('email', etat.user.email);
+  }
+  const qs = params.toString();
+  fetch('/api/paiement.php' + (qs ? '?' + qs : ''), { credentials: 'same-origin' })
+    .then((r) => r.json())
+    .then((d) => {
+      if (d.paye && !etat.premium) {
+        etat.premium = true;
+        publier();
+        deverrouiller();
+        majBadge();
+        toast('✓ Accès illimité activé — merci infiniment ! ☕');
+      }
+    })
+    .catch(() => {});
 }
 
 // ---------- Verrouillage ----------
@@ -194,6 +222,7 @@ function verrouiller() {
   document.body.style.overflow = 'hidden';
   ecrireServeur(false);
   ecrireFirestore();
+  verifierPaiement(); // au cas où le paiement vient d'être fait (déverrouille tout seul)
 }
 function deverrouiller() {
   if (!verrou) return;
@@ -229,6 +258,7 @@ function boot() {
 
   majBadge();
   lireServeur();
+  verifierPaiement(); // appareil déjà débloqué par un paiement ? (cookie serveur)
   verifierVerrou();
   setInterval(tick, 1000);
 

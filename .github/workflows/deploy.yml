@@ -16,8 +16,9 @@ jobs:
         run: |
           cat > site/api/config.php <<PHP
           <?php
-          const COOKIE_SECRET = '${{ secrets.COOKIE_SECRET }}';
-          const SITE_URL      = 'https://sur-le-phil.fr';
+          const COOKIE_SECRET         = '${{ secrets.COOKIE_SECRET }}';
+          const SITE_URL              = 'https://sur-le-phil.fr';
+          const STRIPE_RESTRICTED_KEY = '${{ secrets.STRIPE_RESTRICTED_KEY }}';
           PHP
 
       - name: Envoyer sur Infomaniak (FTPS)

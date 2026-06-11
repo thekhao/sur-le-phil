@@ -15,9 +15,12 @@ Comptes Google Firebase · Paiement Stripe (Payment Link).
   et compte Firestore (`users/{uid}.usedMs`, qui suit l'utilisateur d'un appareil à l'autre).
 - Ensuite : **accès illimité à 4,99 €** (paiement unique via un Payment Link /
   Buy Button Stripe — aucune clé secrète côté serveur).
-- **Activation manuelle** : le paiement apparaît dans le Dashboard Stripe
-  (email + `client_reference_id` = uid Firebase si l'acheteur était connecté) ;
-  le propriétaire active alors le compte depuis l'onglet **Admin** du site
+- **Activation automatique** (`api/paiement.php`, si le secret `STRIPE_RESTRICTED_KEY`
+  est configuré) : le serveur vérifie auprès de Stripe — par session de retour
+  (`merci.html?session_id=…`), par `client_reference_id` (= uid Firebase) ou par
+  email du paiement — et pose un cookie signé qui débloque l'appareil.
+- **Activation manuelle** (secours, et la plus durable car rattachée au compte) :
+  le propriétaire active le compte depuis l'onglet **Admin** du site
   (champ Firestore `premium: true`). Le déblocage est instantané chez
   l'utilisateur (écoute temps réel `onSnapshot`).
 
@@ -51,6 +54,7 @@ site/                       ← racine web, déployée telle quelle par FTP
 ├── robots.txt · sitemap.xml · googleb5986679555ee8ae.html (Search Console)
 └── api/                    ← backend PHP minimal
     ├── time.php            ← compteur de temps par appareil (cookie httpOnly signé)
+    ├── paiement.php        ← vérification auto d'un paiement Stripe (clé restreinte)
     ├── common.php          ← signature HMAC des cookies (zéro dépendance)
     ├── config.php.example
     └── config.php          ← ABSENT du repo : généré au déploiement depuis les secrets GitHub
@@ -62,8 +66,10 @@ firestore.rules             ← règles de sécurité à publier dans la console
 
 Un push sur `main` déclenche l'envoi FTP vers Infomaniak (~1 min). Rien d'autre à faire.
 Secrets GitHub requis (Settings → Secrets and variables → Actions) :
-`FTP_PASSWORD`, `COOKIE_SECRET`. (`STRIPE_SECRET_KEY` n'est **plus** utilisé :
-le paiement passe par un Payment Link, sans clé secrète.)
+`FTP_PASSWORD`, `COOKIE_SECRET`, et `STRIPE_RESTRICTED_KEY` (clé restreinte
+lecture seule — optionnelle mais nécessaire à l'activation automatique des
+paiements ; vide = activation manuelle via l'onglet Admin).
+(`STRIPE_SECRET_KEY` n'est **plus** utilisé.)
 
 ## Configuration restante (voir GUIDE-DEPLOIEMENT.md, section « Ce qu'il reste à faire »)
 

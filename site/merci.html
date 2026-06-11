@@ -36,10 +36,28 @@ p strong{color:var(--encre)}
   <span class="tampon">Paiement reçu ✓</span>
   <h1>Merci infiniment&nbsp;!</h1>
   <p>Tu viens de rejoindre <strong>le Banquet</strong> — le Cahier de Philo te doit un café, et toi, plus aucune limite de temps.</p>
-  <p><strong>Ton accès illimité est activé sur ton compte sous 24&nbsp;h maximum</strong> (souvent en quelques minutes). Connecte-toi sur le site avec le même email que le paiement&nbsp;: le déblocage apparaîtra tout seul, même page ouverte.</p>
+  <p id="statut-attente"><strong>Ton accès illimité est activé sur ton compte sous 24&nbsp;h maximum</strong> (souvent en quelques minutes). Connecte-toi sur le site avec le même email que le paiement&nbsp;: le déblocage apparaîtra tout seul, même page ouverte.</p>
+  <p id="statut-ok" style="display:none;color:var(--vert-ok)"><strong>✓ Ton accès illimité est déjà actif sur cet appareil.</strong> Connecte-toi aussi à ton compte (même email que le paiement) pour le retrouver partout.</p>
   <p>Pas encore de compte&nbsp;? Crée-le maintenant avec cet email (bouton «&nbsp;👤 Compte&nbsp;» sur la page d'accueil).</p>
   <a class="btn" href="/">← Retourner réviser</a>
   <p class="note">Un souci d'activation&nbsp;? <a href="mailto:kemberlyraid329@hotmail.com">kemberlyraid329@hotmail.com</a> · <a href="/mentions-legales.html">Mentions légales</a></p>
 </main>
+<script>
+/* Si Stripe redirige ici avec ?session_id={CHECKOUT_SESSION_ID} (à configurer
+   dans le Dashboard → Payment Links → Après le paiement), on vérifie la session
+   côté serveur : l'appareil est débloqué immédiatement, sans intervention. */
+(async () => {
+  const sid = new URLSearchParams(location.search).get('session_id');
+  if (!sid) return;
+  try {
+    const r = await fetch('/api/paiement.php?session_id=' + encodeURIComponent(sid), { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.paye) {
+      document.getElementById('statut-attente').style.display = 'none';
+      document.getElementById('statut-ok').style.display = 'block';
+    }
+  } catch (e) { /* la voie normale (activation sous 24 h) reste affichée */ }
+})();
+</script>
 </body>
 </html>

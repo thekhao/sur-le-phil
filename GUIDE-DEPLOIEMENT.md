@@ -24,12 +24,25 @@ Sur [console.firebase.google.com](https://console.firebase.google.com) → proje
 - Dans `site/js/firebase-init.js` : mettre le même email dans `ADMIN_EMAIL` (puis push).
 - Connecte-toi sur le site avec cet email : l'onglet **Admin** apparaît dans la modale Compte.
 
-### 3. Stripe — redirection après paiement (conseillé)
-Dashboard Stripe (compte qui possède le Payment Link) → **Payment Links** → le lien 4,99 € →
-**Après le paiement** → rediriger vers **`https://sur-le-phil.fr/merci.html`**.
-Sans ça, l'acheteur voit la confirmation Stripe standard (fonctionnel mais moins guidé).
+### 3. Stripe — activation AUTOMATIQUE des paiements (fortement conseillé)
+Avec une **clé restreinte** (lecture seule), le site vérifie lui-même auprès de Stripe
+qu'un visiteur a payé, et se débloque tout seul — plus rien à faire à la main :
+1. Dashboard Stripe → **Développeurs → Clés API → Créer une clé restreinte** →
+   nom `sur-le-phil lecture` → permission **« Sessions Checkout : Lecture »** (tout le
+   reste sur « Aucune ») → Créer → copie la clé `rk_live_…`.
+2. Repo GitHub → Settings → Secrets and variables → Actions → **New repository secret** →
+   nom `STRIPE_RESTRICTED_KEY`, valeur = la clé → puis relancer le déploiement
+   (onglet Actions → « Déploiement FTP Infomaniak » → Run workflow).
+3. C'est tout. Le site reconnaît un paiement par l'uid du compte (si l'acheteur était
+   connecté), par l'email du paiement, ou par la session de retour (point 4).
 
-## Activer un accès illimité après un paiement (au quotidien)
+### 4. Stripe — redirection après paiement (conseillé)
+Dashboard Stripe → **Payment Links** → le lien 4,99 € → **Après le paiement** →
+rediriger vers **`https://sur-le-phil.fr/merci.html?session_id={CHECKOUT_SESSION_ID}`**.
+Avec la clé du point 3, l'appareil de l'acheteur est alors débloqué **immédiatement**
+au retour du paiement. Sans ça, l'acheteur voit la confirmation Stripe standard.
+
+## Activer un accès à la main (secours, ou tant que la clé n'est pas en place)
 
 1. Stripe t'envoie une notification de paiement (ou regarde le Dashboard → Paiements).
 2. Note l'**email** de l'acheteur (et le `client_reference_id` s'il était connecté = uid Firebase).
@@ -38,6 +51,8 @@ Sans ça, l'acheteur voit la confirmation Stripe standard (fonctionnel mais moin
 
 Si l'acheteur n'a pas encore de compte : il doit en créer un **avec l'email du paiement**,
 puis tu actives. (Le site le lui explique à chaque étape.)
+L'activation manuelle (Firestore `premium`) reste la plus durable : elle est rattachée
+au compte pour toujours, indépendamment de Stripe.
 
 ## Modifier le site ensuite
 
@@ -53,10 +68,6 @@ soumettre `sitemap.xml` (rubrique Sitemaps) et « Demander une indexation » pou
 
 ## Pour aller plus loin (optionnel, pas nécessaire au lancement)
 
-- **Activation automatique des paiements** : demander au propriétaire du compte Stripe
-  une **clé restreinte** (lecture des sessions Checkout) + configurer un webhook vers un
-  endpoint PHP qui marquerait `premium: true` tout seul. L'architecture actuelle (admin
-  manuel) a été choisie parce qu'on ne dispose que d'un Payment Link, sans clé API.
 - **Reçus / factures** : activables dans le Dashboard Stripe (Paramètres → Emails clients).
 - **Nom d'expéditeur des emails Firebase** : personnalisable (Authentication → Templates),
   voire domaine d'envoi custom.

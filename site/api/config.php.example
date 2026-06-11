@@ -1,5 +1,8 @@
 <?php
 // ⚠️ Configuration secrète — à compléter. Ne jamais partager ce fichier.
 // En production, ce fichier est généré au déploiement depuis les secrets GitHub.
-const COOKIE_SECRET = 'A_REMPLACER_longue_phrase_aleatoire';
-const SITE_URL      = 'https://sur-le-phil.fr';
+const COOKIE_SECRET         = 'A_REMPLACER_longue_phrase_aleatoire';
+const SITE_URL              = 'https://sur-le-phil.fr';
+// Clé restreinte Stripe (rk_live_…, lecture seule des sessions Checkout) :
+// active la vérification automatique des paiements. Vide = activation manuelle.
+const STRIPE_RESTRICTED_KEY = '';
