@@ -1,8 +1,35 @@
 /* ============================================================
-   custom.css — point d'extension pour les retouches de style.
-   Ce fichier est chargé par index.html APRÈS les styles du site :
-   tout ce qui est écrit ici prend le dessus, sans toucher au
-   gros fichier index.html. (Pratique pour les agents IA.)
-   Palette : --ardoise #243832 · --craie #F7F4EA · --craie-jaune #E5B43C
-             --papier #FDFCF7 · --encre #1F2D3D · --rouge #B33A3A
+   custom.css — point d'extension styles (sur-le-phil.fr)
+   Chargé après les styles du site : surcharge tout.
    ============================================================ */
+
+/* ------------------------------------------------------------
+   Badge « Révision » + minuteur → bas GAUCHE (filet de sécurité,
+   en complément de custom.js qui le repère dynamiquement).
+   On couvre les identifiants/classes plausibles du badge de
+   paywall.js ; les règles inexistantes sont sans effet.
+   ------------------------------------------------------------ */
+#paywall-badge, .paywall-badge,
+#pw-badge, .pw-badge,
+#badge-revision, .badge-revision,
+#revision-badge, .revision-badge,
+[data-paywall-badge] {
+  right: auto !important;
+  left: 18px !important;
+}
+@media (max-width: 640px) {
+  #paywall-badge, .paywall-badge,
+  #pw-badge, .pw-badge,
+  #badge-revision, .badge-revision,
+  #revision-badge, .revision-badge,
+  [data-paywall-badge] {
+    left: 12px !important;
+  }
+}
+
+/* Sur mobile, éviter tout chevauchement résiduel entre le badge
+   (gauche) et la pastille musique (droite) : on remonte la pastille
+   d'un cran si l'écran est très étroit. */
+@media (max-width: 380px) {
+  .mus-pill { bottom: 76px; }
+}
