@@ -3,101 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Offre-moi un café ☕ — Le Cahier de Philo</title>
-<meta name="description" content="Le Cahier de Philo est gratuit. Si les fiches t'aident à réviser le bac, tu peux soutenir le site en offrant un café.">
-<link rel="canonical" href="https://sur-le-phil.fr/soutien.html">
+<title>Soutenir le Cahier — sur-le-phil.fr</title>
+<meta name="description" content="Trois manières de soutenir le Cahier de Philo : l'Obole (un café à 1 €), les Drachmes (1,99 € de crédits en puissance) et le Banquet (4,99 € — soutien + accès illimité).">
+<!-- ============================================================
+  PAGE DE SOUTIEN / PRÉ-PAIEMENT
+  Trois offres (boutons → api/checkout.php) :
+    · ?offre=cafe      → 1,00 €  (paiement unique, don « café »)
+    · ?offre=credits   → 1,99 €  (crédits/drachmes, à utiliser plus tard)
+    · ?offre=illimite  → 4,99 €  (soutien + accès illimité au site)
+  ⚠ Côté backend (api/checkout.php), faire correspondre ces trois
+    valeurs d'« offre » aux montants 100 / 199 / 499 centimes.
+    L'ancienne offre « 5 € illimité » passe à 4,99 €.
+  Tant que STRIPE_SECRET_KEY est un placeholder, les boutons
+  renvoient l'erreur propre habituelle — comportement inchangé.
+ ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,800;1,400;1,600&family=Caveat:wght@500;700&family=Archivo:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --ardoise:#243832;--ardoise-fonce:#1A2A25;--craie:#F7F4EA;--craie-jaune:#E5B43C;
-  --papier:#FDFCF7;--papier-ombre:#EFEAD9;--encre:#1F2D3D;--encre-claire:#5A6B7E;
-  --rouge:#B33A3A;--vert-ok:#3E7A5E;
+  --papier:#FDFCF7;--papier-ombre:#EFEAD9;--ligne:#C9D9E8;--marge:#D45D5D;
+  --encre:#1F2D3D;--encre-claire:#5A6B7E;--rouge:#B33A3A;--vert-ok:#3E7A5E;--radius:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Spectral',Georgia,serif;background:var(--papier-ombre);color:var(--encre);line-height:1.6}
+::selection{background:var(--craie-jaune);color:var(--encre)}
+
+/* ---------- Tableau (en-tête) ---------- */
 .tableau{
-  background:radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.05), transparent 50%),var(--ardoise);
+  background:radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.05), transparent 50%),
+             radial-gradient(ellipse at 80% 90%, rgba(255,255,255,.04), transparent 50%),var(--ardoise);
   border-bottom:10px solid #8A6240;box-shadow:inset 0 0 80px rgba(0,0,0,.35);
-  color:var(--craie);padding:3rem 1.5rem 3.4rem;text-align:center;
+  color:var(--craie);padding:2.4rem 1.5rem 2.6rem;text-align:center;
 }
-.tableau h1{font-family:'Caveat',cursive;font-weight:700;font-size:clamp(2.6rem,6vw,4rem);line-height:1.05;
-  text-shadow:0 0 6px rgba(247,244,234,.25)}
-.tableau h1 .souligne{background-image:linear-gradient(90deg,var(--craie-jaune),var(--craie-jaune));
-  background-repeat:no-repeat;background-size:100% 3px;background-position:0 96%}
-.tableau p{font-style:italic;font-weight:300;color:rgba(247,244,234,.85);max-width:52ch;margin:.8rem auto 0}
-main{max-width:720px;margin:0 auto;padding:2.4rem 1.5rem 4rem}
-.message{display:none;font-family:'Archivo',sans-serif;font-size:.9rem;font-weight:600;color:#fff;
-  background:var(--vert-ok);border-radius:8px;padding:.8rem 1.2rem;margin-bottom:1.6rem;text-align:center}
-.message.erreur{background:var(--rouge)}
-.copie{background:var(--papier);border-radius:10px;padding:1.8rem 1.6rem;
-  box-shadow:0 2px 4px rgba(31,45,61,.08),0 10px 24px rgba(31,45,61,.06);text-align:center}
-.copie .temps{font-family:'Caveat',cursive;font-size:1.5rem;color:var(--rouge)}
-.offres{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 1.2rem}
-.offre{flex:1;min-width:200px;max-width:280px;border:1.5px solid #CFC8B2;border-radius:10px;padding:1.2rem;background:#fff}
-.offre.star{border-color:var(--craie-jaune);background:#FFFBEF;position:relative}
-.offre .prix{font-family:'Caveat',cursive;font-size:2.6rem;color:var(--ardoise);display:block}
-.offre .det{font-family:'Archivo',sans-serif;font-size:.78rem;color:var(--encre-claire);display:block;margin:.2rem 0 1rem}
-.btn{display:inline-block;font-family:'Archivo',sans-serif;font-size:.88rem;font-weight:700;text-decoration:none;
-  background:var(--ardoise);color:var(--craie);border:none;border-radius:8px;padding:.65rem 1.2rem;cursor:pointer;width:100%}
+.eyebrow{font-family:'Archivo',sans-serif;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--craie-jaune);margin-bottom:.6rem}
+.titre-craie{font-family:'Caveat',cursive;font-weight:700;font-size:clamp(2.4rem,6vw,4rem);line-height:1.05;text-shadow:0 0 6px rgba(247,244,234,.25)}
+.titre-craie .souligne{background-image:linear-gradient(90deg,var(--craie-jaune),var(--craie-jaune));background-repeat:no-repeat;background-size:100% 3px;background-position:0 96%}
+.sous-titre{font-style:italic;font-weight:300;color:rgba(247,244,234,.85);max-width:52ch;margin:.8rem auto 0}
+.retour{
+  display:inline-block;margin-top:1.3rem;font-family:'Archivo',sans-serif;font-size:.8rem;font-weight:600;
+  color:var(--craie);text-decoration:none;border:1.5px dashed rgba(247,244,234,.5);border-radius:999px;padding:.45rem 1.1rem;
+}
+.retour:hover{background:rgba(247,244,234,.14)}
+
+main{max-width:1060px;margin:0 auto;padding:2.4rem 1.5rem 4rem}
+.chapeau{color:var(--encre-claire);font-style:italic;max-width:64ch;margin:0 auto 2rem;text-align:center}
+
+/* ---------- Les trois formules ---------- */
+.formules{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.2rem;align-items:stretch}
+.formule{
+  position:relative;display:flex;flex-direction:column;
+  background:linear-gradient(to right, transparent 14px, var(--marge) 14px, var(--marge) 16px, transparent 16px),
+             repeating-linear-gradient(to bottom, var(--papier) 0, var(--papier) 27px, var(--ligne) 27px, var(--ligne) 28px);
+  background-color:var(--papier);
+  border:1px solid #E2DCC8;border-radius:var(--radius);
+  box-shadow:0 2px 0 #E2DCC8,0 10px 24px rgba(31,45,61,.07);
+  padding:1.6rem 1.4rem 1.4rem 1.9rem;
+}
+.formule.royale{border:2px solid var(--craie-jaune);box-shadow:0 2px 0 #D6A52F,0 14px 30px rgba(31,45,61,.12)}
+.tampon{
+  position:absolute;top:-12px;right:14px;display:inline-block;
+  font-family:'Archivo',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rouge);border:2px solid var(--rouge);border-radius:6px;padding:.18rem .55rem;
+  transform:rotate(3deg);background:var(--papier);
+}
+.tampon.or{color:#9A7414;border-color:var(--craie-jaune);background:#FBF3DC}
+.pictogramme{font-size:2.1rem;line-height:1;margin-bottom:.4rem}
+.formule h2{font-weight:800;font-size:1.35rem;line-height:1.15}
+.formule .grec{font-family:'Caveat',cursive;font-weight:700;font-size:1.15rem;color:var(--encre-claire)}
+.prix{font-family:'Caveat',cursive;font-weight:700;font-size:2.5rem;color:var(--rouge);margin:.35rem 0 .55rem}
+.prix small{font-family:'Archivo',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--encre-claire)}
+.formule p.texte{font-size:.93rem;flex:1}
+.formule p.texte em{color:var(--encre)}
+.apporte{list-style:none;margin:.8rem 0 1rem;padding:0}
+.apporte li{font-size:.88rem;padding-left:1.4rem;position:relative;margin-bottom:.35rem}
+.apporte li::before{content:'✓';position:absolute;left:0;color:var(--vert-ok);font-weight:700}
+.btn{
+  display:block;text-align:center;text-decoration:none;font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;
+  background:var(--ardoise);color:var(--craie);border-radius:8px;padding:.85rem 1.2rem;
+  transition:background .15s,transform .1s;
+}
 .btn:hover{background:var(--ardoise-fonce)}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible{outline:3px solid var(--craie-jaune);outline-offset:2px}
 .btn.jaune{background:var(--craie-jaune);color:var(--encre)}
-.reco{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--craie-jaune);color:var(--encre);
-  font-family:'Archivo',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  border-radius:999px;padding:.18rem .6rem;white-space:nowrap}
-.note{font-family:'Archivo',sans-serif;font-size:.72rem;color:#8A92A0;margin-top:1rem}
-.note a{color:#8A92A0}
-.retour{display:inline-block;margin-top:2rem;font-family:'Archivo',sans-serif;font-size:.85rem;font-weight:600;color:var(--ardoise)}
+.btn.jaune:hover{background:#D6A52F}
+.annotation{
+  font-family:'Caveat',cursive;font-weight:700;color:var(--rouge);font-size:1.05rem;
+  text-align:center;margin-top:.55rem;transform:rotate(-1.5deg);
+}
+
+/* ---------- Note de bas de copie ---------- */
+.note{
+  background:var(--papier);border:1px solid #E2DCC8;border-radius:var(--radius);
+  box-shadow:0 2px 0 #E2DCC8;padding:1.4rem 1.6rem;margin-top:2.2rem;
+}
+.note h3{font-weight:800;font-size:1.2rem;margin-bottom:.2rem}
+.note .grec{font-family:'Caveat',cursive;font-size:1.25rem;color:var(--encre-claire)}
+.note dl{margin-top:.9rem}
+.note dt{font-weight:600;margin-top:.8rem}
+.note dd{font-size:.93rem;color:var(--encre-claire);margin-left:0}
+.merci{
+  display:none;background:#E8F2EC;border:1.5px solid var(--vert-ok);border-radius:var(--radius);
+  padding:1rem 1.3rem;margin-bottom:1.6rem;text-align:center;font-size:1rem;
+}
+.merci .craie{font-family:'Caveat',cursive;font-size:1.5rem;color:var(--vert-ok);display:block}
+
+footer{background:var(--ardoise);color:rgba(247,244,234,.75);text-align:center;padding:1.6rem;font-size:.85rem;font-style:italic}
+footer a{color:var(--craie-jaune)}
+footer .craie{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--craie-jaune);font-style:normal}
+
+@media (max-width:640px){.formule{padding-left:1.7rem}}
 </style>
+<link rel="stylesheet" href="custom.css">
 </head>
 <body>
+
 <header class="tableau">
-  <h1>Offre-moi <span class="souligne">un café</span> ☕</h1>
-  <p>Le Cahier de Philo est gratuit et le restera pendant les révisions.
-  Si les fiches t'aident, un petit café fait toute la différence pour garder le site en ligne.</p>
+  <p class="eyebrow">sur-le-phil.fr · Le Cahier de Philo</p>
+  <h1 class="titre-craie">Doit-on payer ce qui est <span class="souligne">gratuit</span>&nbsp;?</h1>
+  <p class="sous-titre">Non — et c'est tout l'intérêt. Le Cahier est en accès libre&nbsp;: soutenir relève du don, pas de l'échange. «&nbsp;Le bienfait n'est pas dans la chose donnée, mais dans l'intention de celui qui donne&nbsp;» — Sénèque, <em>Des bienfaits</em>. Voici trois intentions possibles.</p>
+  <a class="retour" href="index.html">← Retourner réviser</a>
 </header>
+
 <main>
-  <div class="message" id="msg"></div>
-  <div class="copie">
-    <p id="temps-revision" style="display:none">D'après ton cahier, tu as déjà révisé
-      <span class="temps" id="temps-valeur"></span> ici. Pas mal, non&nbsp;?</p>
-    <div class="offres">
-      <div class="offre">
-        <span class="prix">1&nbsp;€</span>
-        <span class="det">Un café serré.<br>Merci pour le coup de pouce&nbsp;!</span>
-        <a class="btn" href="/api/checkout.php?plan=hour">Offrir un café</a>
-      </div>
-      <div class="offre star">
-        <span class="reco">Grand merci</span>
-        <span class="prix">5&nbsp;€</span>
-        <span class="det">Un grand café + ma reconnaissance éternelle (et l'accès illimité si un jour le site devient payant).</span>
-        <a class="btn jaune" href="/api/checkout.php?plan=full">Offrir un grand café</a>
-      </div>
-    </div>
-    <p class="note">Paiement sécurisé par Stripe · aucune donnée bancaire ne passe par ce site ·
-      <a href="/mentions-legales.html">Mentions légales &amp; CGV</a></p>
+  <div class="merci" id="merci">
+    <span class="craie">Merci infiniment&nbsp;!</span>
+    Votre soutien est bien arrivé. Le Cahier — et son auteur — vous en sont reconnaissants. Bonnes révisions&nbsp;!
   </div>
-  <a class="retour" href="/">← Retour aux révisions</a>
+
+  <p class="chapeau">Derrière l'agora&nbsp;: un serveur, un nom de domaine et pas mal de cafés. Chaque geste compte — du plus petit au plus illimité. Paiement sécurisé par Stripe, sans création de compte&nbsp;; aucune donnée bancaire ne transite par le site.</p>
+
+  <div class="formules">
+
+    <!-- ===== 1 € — L'Obole ===== -->
+    <section class="formule">
+      <span class="tampon">Petit geste, grande aide</span>
+      <span class="pictogramme">☕</span>
+      <h2>L'Obole</h2>
+      <p class="grec">un café pour l'auteur</p>
+      <p class="prix">1&nbsp;€ <small>· une fois</small></p>
+      <p class="texte">Épicure classait les désirs&nbsp;: <em>naturels et nécessaires</em>, naturels non nécessaires, vains. Ce café appartient à la deuxième famille — on peut s'en passer, mais quel surcroît de joie. Une obole, et le Cahier carbure un jour de plus.</p>
+      <ul class="apporte">
+        <li>Un vrai café (probablement transformé en fiches)</li>
+        <li>La satisfaction du bienfait selon Sénèque</li>
+      </ul>
+      <a class="btn" href="api/checkout.php?offre=cafe">☕ Offrir un café — 1&nbsp;€</a>
+      <p class="annotation">«&nbsp;Carpe diem… et un expresso.&nbsp;»</p>
+    </section>
+
+    <!-- ===== 1,99 € — Les Drachmes ===== -->
+    <section class="formule">
+      <span class="tampon">À utiliser plus tard</span>
+      <span class="pictogramme">🪙</span>
+      <h2>Les Drachmes</h2>
+      <p class="grec">des crédits en puissance</p>
+      <p class="prix">1,99&nbsp;€ <small>· crédits</small></p>
+      <p class="texte">Aristote distingue l'<em>en puissance</em> et l'<em>en acte</em>&nbsp;: le gland est chêne en puissance. Ces drachmes dorment dans votre besace — elles passeront <em>à l'acte</em> sur les futures options du Cahier (contenus et bonus à venir). Un soutien aujourd'hui, un avantage demain.</p>
+      <ul class="apporte">
+        <li>1,99&nbsp;€ de crédits conservés pour les nouveautés</li>
+        <li>Le plaisir d'avoir investi comme Thalès<br><span style="font-size:.78rem;color:var(--encre-claire)">(qui fit fortune en louant des pressoirs — vraie histoire, Aristote la raconte)</span></li>
+      </ul>
+      <a class="btn" href="api/checkout.php?offre=credits">🪙 Acheter des drachmes — 1,99&nbsp;€</a>
+      <p class="annotation">«&nbsp;En puissance aujourd'hui, en acte demain.&nbsp;»</p>
+    </section>
+
+    <!-- ===== 4,99 € — Le Banquet ===== -->
+    <section class="formule royale">
+      <span class="tampon or">★ La voie royale</span>
+      <span class="pictogramme">🏛️</span>
+      <h2>Le Banquet</h2>
+      <p class="grec">soutien + accès illimité</p>
+      <p class="prix">4,99&nbsp;€ <small>· une fois, pour toujours</small></p>
+      <p class="texte">Chez Platon, le <em>Banquet</em> est le lieu où l'on s'élève, de degré en degré, vers ce qui ne passe pas. Ici&nbsp;: votre plus beau soutien, et l'accès <em>illimité</em> au Cahier — l'<em>apeiron</em> d'Anaximandre, version révisions. Sans limite de temps, sans abonnement, sans petites lignes.</p>
+      <ul class="apporte">
+        <li>Accès illimité au Cahier, à vie</li>
+        <li>Toutes les futures nouveautés incluses</li>
+        <li>La gratitude éternelle d'un prof de philo en herbe</li>
+      </ul>
+      <a class="btn jaune" href="api/checkout.php?offre=illimite">🏛️ Rejoindre le Banquet — 4,99&nbsp;€</a>
+      <p class="annotation">«&nbsp;Mention très bien&nbsp;!&nbsp;»</p>
+    </section>
+
+  </div>
+
+  <!-- ===== Parrêsia : franc-parler ===== -->
+  <div class="note">
+    <h3>Parrêsia <span class="grec">— le franc-parler des Grecs, appliqué à votre porte-monnaie</span></h3>
+    <dl>
+      <dt>Où va l'argent&nbsp;?</dt>
+      <dd>Hébergement, nom de domaine, outils — et le reste en cafés effectifs. Pas de publicité sur le Cahier, pas de revente de données&nbsp;: votre soutien est son seul carburant.</dd>
+      <dt>Pourquoi donner pour un site en accès libre&nbsp;?</dt>
+      <dd>Kant distingue l'obligation de la contrainte&nbsp;: rien ne vous y contraint — c'est exactement ce qui donne sa valeur au geste. L'obligation librement reconnue, en somme&nbsp;: du Kant appliqué.</dd>
+      <dt>Le paiement est-il sûr&nbsp;?</dt>
+      <dd>Oui&nbsp;: tout passe par Stripe, leader du paiement en ligne. Le site ne voit ni ne stocke jamais votre carte. Pas de compte à créer, pas d'abonnement caché — un paiement unique, et c'est tout.</dd>
+      <dt>Et si je change d'avis&nbsp;?</dt>
+      <dd>Écrivez via la page <a href="mentions-legales.html">mentions légales</a>&nbsp;: on trouvera une solution. La justice corrective d'Aristote s'applique aussi aux petites sommes.</dd>
+    </dl>
+  </div>
 </main>
+
+<footer>
+  <p class="craie">«&nbsp;La reconnaissance est la mémoire du cœur.&nbsp;»</p>
+  <p>Merci de faire vivre le Cahier. <a href="index.html">Retour aux révisions</a> · <a href="mentions-legales.html">Mentions légales</a></p>
+</footer>
+
 <script>
-(function(){
-  // Affiche le temps total de révision (compté par paywall.js sur la page principale)
-  try{
-    var t = parseInt(localStorage.getItem('bp_temps_total')||'0',10)||0;
-    if(t >= 120){
-      var m = Math.floor(t/60), h = Math.floor(m/60);
-      document.getElementById('temps-valeur').textContent = h>0 ? h+' h '+String(m%60).padStart(2,'0') : m+' minutes';
-      document.getElementById('temps-revision').style.display = 'block';
-    }
-  }catch(e){}
-  // Messages après redirection de paiement
-  var p = new URLSearchParams(location.search);
-  var msg = document.getElementById('msg');
-  if(p.get('paiement')==='ok'){ msg.textContent = '✓ Merci infiniment pour le café ! ☕'; msg.style.display='block'; }
-  else if(p.get('paiement')==='annule'){ msg.textContent = 'Paiement annulé — pas de souci !'; msg.className='message erreur'; msg.style.display='block'; }
-  else if(p.get('erreur')){ msg.textContent = 'Le paiement n’est pas encore activé — merci quand même pour l’intention ! ☕'; msg.className='message erreur'; msg.style.display='block'; }
-  if(p.toString()) history.replaceState(null,'',location.pathname);
-})();
+/* Affiche le bandeau de remerciement au retour d'un paiement réussi
+   (ex. activate.php redirige vers soutien.html?merci=1). */
+if (/[?&](merci|success)=1/.test(location.search)) {
+  document.getElementById('merci').style.display = 'block';
+}
 </script>
+<script src="paywall.js" defer></script>
+<script src="custom.js" defer></script>
 </body>
 </html>
